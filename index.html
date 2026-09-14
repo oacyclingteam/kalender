@@ -119,11 +119,6 @@
     overflow:hidden;
     scroll-margin-top:104px;
   }
-  .card-left{
-    flex:1;min-width:0;
-    display:flex;gap:12px;
-    padding:12px;
-  }
   .date-block{
     flex-shrink:0;
     width:54px;
@@ -132,6 +127,7 @@
     color:#fff;
     display:flex;flex-direction:column;align-items:center;justify-content:center;
     padding:8px 2px;
+    margin:12px 0 12px 12px;
   }
   .date-block .day{
     font-family:'Barlow Condensed',sans-serif;
@@ -142,6 +138,21 @@
     font-size:10px;letter-spacing:0.5px;text-transform:uppercase;
     color:#9FB4C6;margin-top:3px;
   }
+
+  .groups{flex:1;min-width:0;display:flex;flex-direction:column;}
+  .group-row{
+    flex:1;min-width:0;
+    display:flex;align-items:center;gap:10px;
+    padding:12px;
+  }
+  .group-row + .group-row{border-top:1px solid var(--border);}
+  .group-label{
+    flex-shrink:0;width:20px;height:20px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:10.5px;font-weight:700;
+  }
+  .group-label.a{background:var(--ink-blue);color:#fff;}
+  .group-label.b{background:#5DCAA5;color:#04342C;}
 
   .card-body{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:5px;}
   .row-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
@@ -172,13 +183,15 @@
   .profile-icon{flex-shrink:0;}
 
   .gpx-panel{
-    flex-shrink:0;width:64px;align-self:stretch;
-    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+    flex-shrink:0;width:44px;height:44px;
+    border-radius:10px;
+    display:flex;align-items:center;justify-content:center;
   }
   .gpx-btn{
     appearance:none;border:none;cursor:pointer;margin:0;padding:0;
+    width:100%;height:100%;border-radius:10px;
     background:var(--ink-blue);color:#fff;
-    font-family:'Inter',sans-serif;font-weight:700;font-size:11px;letter-spacing:0.4px;
+    display:flex;align-items:center;justify-content:center;
     transition:background .15s ease;
   }
   .gpx-btn:active{background:var(--ink-blue-2);}
@@ -186,10 +199,10 @@
 
   .gpx-panel.empty{
     background:#E6E6E1;color:var(--muted);
-    padding:0 6px;text-align:center;
+    padding:0 4px;text-align:center;
   }
   .gpx-panel.empty .empty-label{
-    font-size:10.5px;font-weight:600;line-height:1.25;
+    font-size:8.5px;font-weight:600;line-height:1.15;
   }
 
   /* ---------- Empty / loading / error ---------- */
@@ -254,9 +267,9 @@
   "use strict";
 
   // ---------- Config ----------
-  var SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT1G5Id019qKcPmQGS8o8NODp8FuHGf7A2ASue6BLC-sA23UjIq6Ps3Fuh4NlYZGI8wZW9HCSB8is9F/pub?gid=52926562&single=true&output=csv";
-  var GPX_API_URL = "https://api.github.com/repos/oacyclingteam/kalender/contents/gpx/2026";
-  var GPX_RAW_BASE = "https://raw.githubusercontent.com/oacyclingteam/kalender/main/gpx/2026/";
+  var SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT1G5Id019qKcPmQGS8o8NODp8FuHGf7A2ASue6BLC-sA23UjIq6Ps3Fuh4NlYZGI8wZW9HCSB8is9F/pub?gid=699677712&single=true&output=csv";
+  var GPX_API_URL = "https://api.github.com/repos/oacyclingteam/oact/contents/gpx/2027";
+  var GPX_RAW_BASE = "https://raw.githubusercontent.com/oacyclingteam/oact/main/gpx/2027/";
   var HEUVEL_THRESHOLD_HM = 500;
   var CACHE_KEY = "oact-calendar-cache-v1";
 
@@ -406,11 +419,10 @@
     downloadGpx(btn.getAttribute('data-gpx-url'), btn.getAttribute('data-gpx-name'), btn);
   });
 
-  function renderCard(ride){
-    var d = ride.date;
-    var dayNum = d ? d.getDate() : "?";
-    var dow = d ? MONTHS_NL_SHORT[d.getMonth()].toUpperCase() : "";
-    var match = ride.gpxMatch;
+  // Renders a single group's row (name, tag, vertrek, stats, gpx button).
+  // showLabel is false when a ride has only one group, to keep the 2026-style
+  // single-row card unchanged when there's no B group in the data.
+  function renderGroupRow(ritName, vertrek, match, showLabel, groupKey){
     var kmHm = match ? extractKmHm(match.name) : {km:null,hm:null};
     var hasStats = kmHm.km !== null && kmHm.hm !== null;
     var isHill = hasStats && kmHm.hm > HEUVEL_THRESHOLD_HM;
@@ -423,14 +435,14 @@
     }
 
     var metaHtml = '';
-    if (ride.vertrek){
-      metaHtml += '<span class="item">' + clockSVG() + formatTime(ride.vertrek) + '</span>';
+    if (vertrek){
+      metaHtml += '<span class="item">' + clockSVG() + formatTime(vertrek) + '</span>';
     }
 
     var gpxPanelHtml;
     if (match){
-      gpxPanelHtml = '<button type="button" class="gpx-panel gpx-btn" data-gpx-url="' + escapeAttr(match.download_url) + '" data-gpx-name="' + escapeAttr(match.name) + '">' +
-        downloadSVG() + '<span>GPX</span></button>';
+      gpxPanelHtml = '<button type="button" class="gpx-panel gpx-btn" aria-label="Download GPX' + (showLabel?(' groep '+groupKey.toUpperCase()):'') + '" data-gpx-url="' + escapeAttr(match.download_url) + '" data-gpx-name="' + escapeAttr(match.name) + '">' +
+        downloadSVG() + '</button>';
     } else {
       gpxPanelHtml = '<div class="gpx-panel empty"><span class="empty-label">binnenkort</span></div>';
     }
@@ -446,18 +458,37 @@
       statLineHtml = '<div class="no-stats-note">Afstand en hoogtemeters volgen</div>';
     }
 
+    var labelHtml = showLabel ? '<span class="group-label ' + groupKey + '">' + groupKey.toUpperCase() + '</span>' : '';
+
+    return '<div class="group-row">' +
+      labelHtml +
+      '<div class="card-body">' +
+        '<div class="row-top"><span class="ride-name">' + (ritName||'').toLowerCase() + '</span>' + tagHtml + '</div>' +
+        '<div class="meta-row">' + metaHtml + '</div>' +
+        statLineHtml +
+      '</div>' +
+      gpxPanelHtml +
+    '</div>';
+  }
+
+  function renderCard(ride){
+    var d = ride.date;
+    var dayNum = d ? d.getDate() : "?";
+    var dow = d ? MONTHS_NL_SHORT[d.getMonth()].toUpperCase() : "";
+    // Only split into A/B rows when the sheet actually has a distinct Rit (B)
+    // for this date — keeps older seasons without a B column unchanged.
+    var hasB = !!ride.ritB && ride.ritB.toLowerCase() !== ride.rit.toLowerCase();
+
+    var rowsHtml = renderGroupRow(ride.rit, ride.vertrek, ride.gpxMatchA, hasB, 'a');
+    if (hasB){
+      rowsHtml += renderGroupRow(ride.ritB, ride.vertrek, ride.gpxMatchB, true, 'b');
+    }
+
     var tsAttr = d ? ' data-ts="' + d.getTime() + '"' : '';
 
     return '<div class="card"' + tsAttr + '>' +
-      '<div class="card-left">' +
-        '<div class="date-block"><div class="day">' + dayNum + '</div><div class="dow">' + dow + '</div></div>' +
-        '<div class="card-body">' +
-          '<div class="row-top"><span class="ride-name">' + (ride.rit||'').toLowerCase() + '</span>' + tagHtml + '</div>' +
-          '<div class="meta-row">' + metaHtml + '</div>' +
-          statLineHtml +
-        '</div>' +
-      '</div>' +
-      gpxPanelHtml +
+      '<div class="date-block"><div class="day">' + dayNum + '</div><div class="dow">' + dow + '</div></div>' +
+      '<div class="groups">' + rowsHtml + '</div>' +
     '</div>';
   }
 
@@ -468,7 +499,10 @@
     }
 
     var withGpx = rides.map(function(r){
-      return Object.assign({}, r, { gpxMatch: findGpxMatch(r.rit, gpxFiles) });
+      return Object.assign({}, r, {
+        gpxMatchA: findGpxMatch(r.rit, gpxFiles),
+        gpxMatchB: r.ritB ? findGpxMatch(r.ritB, gpxFiles) : null
+      });
     });
 
     withGpx.sort(function(a,b){
@@ -533,7 +567,8 @@
       return {
         date: parseDate(r[0]),
         vertrek: (r[1]||"").trim(),
-        rit: (r[2]||"").trim()
+        rit: (r[2]||"").trim(),
+        ritB: (r[3]||"").trim()
       };
     }).filter(function(r){ return r.rit; });
   }
