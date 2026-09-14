@@ -86,6 +86,24 @@
   .status-dot.stale{background:#D9A441;}
   .status-dot.error{background:#D9583E;}
 
+  .group-filter{
+    display:flex;gap:8px;padding:12px 18px 0;
+  }
+  .filter-btn{
+    appearance:none;border:1px solid rgba(255,255,255,0.28);
+    background:rgba(255,255,255,0.08);
+    color:#fff;
+    font-family:'Inter',sans-serif;font-weight:600;font-size:12.5px;
+    padding:7px 14px;border-radius:999px;
+    cursor:pointer;
+    transition:background .15s ease, border-color .15s ease;
+  }
+  .filter-btn.active{
+    background:var(--accent);
+    border-color:var(--accent);
+  }
+  .filter-btn:active{opacity:0.85;}
+
   /* ---------- Legend ---------- */
   .legend{
     display:flex;gap:14px;padding:14px 18px 4px;
@@ -152,7 +170,7 @@
     font-size:10.5px;font-weight:700;
   }
   .group-label.a{background:var(--ink-blue);color:#fff;}
-  .group-label.b{background:#5DCAA5;color:#04342C;}
+  .group-label.b{background:#D7DBDD;color:var(--ink-blue);}
 
   .card-body{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:5px;}
   .row-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
@@ -244,6 +262,11 @@
       <span class="status-dot" id="statusDot"></span>
       <span id="statusText">Laden…</span>
     </div>
+    <div class="group-filter" id="groupFilter">
+      <button type="button" class="filter-btn active" data-group="all">Alle</button>
+      <button type="button" class="filter-btn" data-group="a">Groep A</button>
+      <button type="button" class="filter-btn" data-group="b">Groep B</button>
+    </div>
   </header>
 
   <div class="legend">
@@ -281,6 +304,7 @@
   var statusText = document.getElementById('statusText');
   var statusDot = document.getElementById('statusDot');
   var refreshBtn = document.getElementById('refreshBtn');
+  var groupFilterEl = document.getElementById('groupFilter');
 
   // ---------- Helpers ----------
   function normalize(s){
@@ -471,6 +495,9 @@
     '</div>';
   }
 
+  var groupFilter = 'all'; // 'all' | 'a' | 'b'
+  var lastRides = null, lastGpxFiles = null;
+
   function renderCard(ride){
     var d = ride.date;
     var dayNum = d ? d.getDate() : "?";
@@ -479,9 +506,16 @@
     // for this date — keeps older seasons without a B column unchanged.
     var hasB = !!ride.ritB && ride.ritB.toLowerCase() !== ride.rit.toLowerCase();
 
-    var rowsHtml = renderGroupRow(ride.rit, ride.vertrek, ride.gpxMatchA, hasB, 'a');
-    if (hasB){
-      rowsHtml += renderGroupRow(ride.ritB, ride.vertrek, ride.gpxMatchB, true, 'b');
+    var rowsHtml;
+    if (groupFilter === 'a'){
+      rowsHtml = renderGroupRow(ride.rit, ride.vertrek, ride.gpxMatchA, false, 'a');
+    } else if (groupFilter === 'b'){
+      rowsHtml = renderGroupRow(ride.ritB || ride.rit, ride.vertrek, ride.gpxMatchB || ride.gpxMatchA, false, 'b');
+    } else {
+      rowsHtml = renderGroupRow(ride.rit, ride.vertrek, ride.gpxMatchA, hasB, 'a');
+      if (hasB){
+        rowsHtml += renderGroupRow(ride.ritB, ride.vertrek, ride.gpxMatchB, true, 'b');
+      }
     }
 
     var tsAttr = d ? ' data-ts="' + d.getTime() + '"' : '';
@@ -493,6 +527,9 @@
   }
 
   function render(rides, gpxFiles){
+    lastRides = rides;
+    lastGpxFiles = gpxFiles;
+
     if (!rides.length){
       contentEl.innerHTML = '<div class="empty-state">Geen ritten gevonden in de kalender.</div>';
       return;
@@ -629,6 +666,17 @@
   }
 
   refreshBtn.addEventListener('click', fetchLive);
+
+  groupFilterEl.addEventListener('click', function(e){
+    var btn = e.target.closest('.filter-btn');
+    if (!btn) return;
+    var group = btn.getAttribute('data-group');
+    if (group === groupFilter) return;
+    groupFilter = group;
+    var buttons = groupFilterEl.querySelectorAll('.filter-btn');
+    for (var i=0;i<buttons.length;i++){ buttons[i].classList.toggle('active', buttons[i] === btn); }
+    if (lastRides) render(lastRides, lastGpxFiles);
+  });
 
   // ---------- Init ----------
   var cached = loadFromCache();
