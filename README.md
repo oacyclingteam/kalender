@@ -53,12 +53,12 @@ bovenaan het script).
 ## Hosting: GitHub Pages
 
 1. Maak (indien nog niet gedaan) een repository `oact` op GitHub onder
-   `dvanhaeke`.
+   `oacyclingteam`.
 2. Upload deze bestanden (via de GitHub-website: **Add file → Upload files**
    werkt prima, geen command line nodig).
 3. Ga naar **Settings → Pages**, kies branch `main`, map `/ (root)`, **Save**.
 4. Na 1–2 minuten is de site live op:
-   `https://dvanhaeke.github.io/oact/`
+   `https://oacyclingteam.github.io/kalender/`
 
 ## De Google Sheet vernieuwen
 
