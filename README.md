@@ -88,7 +88,7 @@ aan van `gpx/2027` naar `gpx/2028`.
 
 ## Hosting: GitHub Pages
 
-1. Maak (indien nog niet gedaan) een repository `oact` op GitHub onder
+1. Maak (indien nog niet gedaan) een repository `kalender` op GitHub onder
    `oacyclingteam`.
 2. Upload deze bestanden (via de GitHub-website: **Add file → Upload files**
    werkt prima, geen command line nodig).
