@@ -584,7 +584,10 @@
     if (!target) return; // season finished or no dated rides — stay at top
 
     requestAnimationFrame(function(){
-      target.scrollIntoView({behavior:'smooth', block:'start'});
+      var headerEl = document.querySelector('header.top');
+      var headerH = headerEl ? headerEl.offsetHeight : 0;
+      var y = target.getBoundingClientRect().top + window.pageYOffset - headerH - 12;
+      window.scrollTo({top: Math.max(y, 0), behavior:'smooth'});
     });
   }
 
