@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>OACT Winterkalender 2026–2027</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#EFEFEC;
+    --surface:#FFFFFF;
+    --ink-blue:#16324A;
+    --ink-blue-2:#1F4463;
+    --ink:#2B3540;
+    --muted:#71818F;
+    --border:#DEDEDA;
+    --accent:#E5622A;
+    --accent-tint:#FBE3D6;
+    --blue-tint:#E3EBF1;
+    --ice:#BFE3F5;
+    --ok-green:#3F8F5F;
+    --radius:14px;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  a{color:inherit;}
+
+  .app{max-width:640px;margin:0 auto;padding-bottom:calc(32px + var(--safe-bottom));}
+
+  /* ---------- Header ---------- */
+  header.top{
+    background:var(--ink-blue);
+    padding-top:calc(18px + var(--safe-top));
+    padding-bottom:14px;
+    color:#fff;
+    border-bottom-left-radius:20px;
+    border-bottom-right-radius:20px;
+  }
+  .top-inner{padding:0 18px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+  .brand h1{
+    font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:28px;
+    letter-spacing:0.3px;margin:0;line-height:1.05;text-transform:uppercase;
+    display:flex;align-items:center;gap:8px;
+  }
+  .brand .sub{margin-top:4px;font-size:13px;color:#B9CCDB;font-weight:500;}
+  .refresh-btn{
+    appearance:none;border:1px solid rgba(255,255,255,0.28);
+    background:rgba(255,255,255,0.08);color:#fff;border-radius:999px;
+    width:38px;height:38px;display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;cursor:pointer;
+  }
+  .refresh-btn:active{background:rgba(255,255,255,0.2);}
+  .refresh-btn.spinning svg{animation:spin 0.8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .status-row{padding:10px 18px 0;display:flex;align-items:center;gap:6px;font-size:12px;color:#9FB4C6;}
+  .status-dot{width:6px;height:6px;border-radius:50%;background:var(--ok-green);flex-shrink:0;}
+  .status-dot.error{background:#D9583E;}
+
+  /* ---------- Hero (next ride) ---------- */
+  .hero-wrap{padding:14px 12px 0;}
+  .hero{
+    background:var(--surface);border:1px solid var(--border);border-radius:18px;
+    overflow:hidden;
+  }
+  .hero-top{padding:14px 16px 12px;}
+  .eyebrow{
+    font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;
+    letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);
+  }
+  .hero-date{font-size:13.5px;color:var(--muted);font-weight:500;margin-top:2px;}
+  .hero-title{display:flex;align-items:center;gap:10px;margin-top:6px;flex-wrap:wrap;}
+  .hero-name{
+    font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:34px;line-height:1;
+    color:var(--ink-blue);margin:0;text-transform:uppercase;letter-spacing:0.3px;
+  }
+  .hero-stats{display:flex;align-items:center;gap:8px;margin-top:6px;}
+  .hero-stats .figs{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;}
+  .hero-stats .unit{font-size:12px;color:var(--muted);font-weight:400;font-family:'Inter',sans-serif;}
+  .hero-stats .sep{color:var(--muted);font-weight:400;margin:0 3px;}
+
+  .wx{background:var(--ink-blue);color:#fff;padding:12px 12px 14px;}
+  .wx-head{display:flex;justify-content:space-between;align-items:baseline;padding:0 4px 8px;font-size:12px;color:#B9CCDB;}
+  .wx-head b{color:#fff;font-weight:600;font-size:12.5px;}
+  .hours{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;}
+  .hour{
+    background:rgba(255,255,255,0.08);border-radius:12px;padding:8px 2px 9px;
+    display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center;
+  }
+  .hour .h{font-size:11.5px;color:#B9CCDB;font-weight:600;}
+  .hour .t{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:22px;line-height:1;}
+  .hour .t.cold{color:var(--ice);}
+  .hour .p{font-size:11px;color:#B9CCDB;display:flex;align-items:center;gap:2px;}
+  .hour .w{font-size:11px;color:#fff;display:flex;align-items:center;gap:3px;white-space:nowrap;}
+  .wx-sum{font-size:12.5px;color:#DCE6EE;padding:10px 4px 0;line-height:1.5;}
+  .wx-alert{
+    margin:10px 0 0;padding:8px 10px;border-radius:10px;
+    background:rgba(191,227,245,0.16);color:var(--ice);font-size:12.5px;font-weight:600;
+    display:flex;align-items:center;gap:8px;
+  }
+  .wx-wait{
+    background:rgba(255,255,255,0.08);border-radius:12px;padding:14px;font-size:13px;color:#DCE6EE;
+    display:flex;align-items:center;gap:10px;
+  }
+
+  .route-wind{display:flex;gap:12px;padding:12px 16px;align-items:stretch;border-bottom:1px solid var(--border);}
+  .route-map{flex-shrink:0;width:104px;height:104px;border-radius:12px;background:var(--blue-tint);display:flex;align-items:center;justify-content:center;}
+  .legs{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;justify-content:center;}
+  .leg{border:1px solid var(--border);border-radius:10px;padding:7px 10px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+  .leg .lbl{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.4px;}
+  .leg .val{font-size:14px;font-weight:700;color:var(--ink-blue);}
+  .leg .val.head{color:var(--accent);}
+  .leg .val.tail{color:var(--ok-green);}
+  .leg-note{font-size:11px;color:var(--muted);}
+
+  .hero-actions{padding:12px 16px 14px;display:flex;flex-direction:column;gap:10px;}
+  .hero-gpx{
+    appearance:none;border:none;cursor:pointer;width:100%;
+    background:var(--accent);color:#fff;border-radius:12px;padding:13px;
+    font-family:'Inter',sans-serif;font-weight:700;font-size:15px;
+    display:flex;align-items:center;justify-content:center;gap:8px;
+  }
+  .hero-gpx:active{opacity:0.9;}
+  .hero-gpx.loading{opacity:0.6;pointer-events:none;}
+  .hero-gpx.none{background:#E6E6E1;color:var(--muted);cursor:default;}
+  .hero-links{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:var(--muted);flex-wrap:wrap;}
+  .hero-links a{color:var(--ink-blue-2);font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:4px;}
+
+  /* ---------- List ---------- */
+  .section-title{
+    font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;
+    letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-blue-2);margin:24px 18px 4px;
+  }
+  .legend{display:flex;gap:14px;padding:4px 18px 0;font-size:12px;color:var(--muted);flex-wrap:wrap;}
+  .legend span{display:inline-flex;align-items:center;gap:6px;}
+  .legend .dot{width:9px;height:9px;border-radius:3px;}
+  .legend .dot.flat{background:var(--blue-tint);border:1.5px solid #7FA0BC;}
+  .legend .dot.hill{background:var(--accent-tint);border:1.5px solid var(--accent);}
+  .month-heading{
+    font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;
+    letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin:18px 18px 8px;
+  }
+  .list{padding:0 12px;display:flex;flex-direction:column;gap:8px;}
+  .card{
+    background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);
+    display:flex;align-items:center;gap:10px;padding:10px 10px 10px 10px;
+  }
+  .card.next{border:2px solid var(--accent);padding:9px;}
+  .card.past{opacity:0.5;}
+  .date-block{
+    flex-shrink:0;width:48px;background:var(--ink-blue);border-radius:10px;color:#fff;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 2px;
+  }
+  .date-block .day{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:21px;line-height:1;}
+  .date-block .mon{font-size:10px;letter-spacing:0.5px;text-transform:uppercase;color:#9FB4C6;margin-top:2px;}
+  .card-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;}
+  .row-top{display:flex;align-items:center;gap:8px;min-width:0;}
+  .ride-name{font-weight:700;font-size:15px;color:var(--ink-blue);text-transform:capitalize;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
+  .meta{font-size:12.5px;color:var(--muted);display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+  .meta .figs{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;color:var(--ink);}
+  .tag{font-size:10.5px;font-weight:700;letter-spacing:0.4px;text-transform:uppercase;padding:3px 8px;border-radius:999px;flex-shrink:0;}
+  .tag.flat{background:var(--blue-tint);color:var(--ink-blue-2);}
+  .tag.hill{background:var(--accent-tint);color:var(--accent);}
+  .tag.tbd{background:#EFEFEC;color:var(--muted);border:1px dashed #C7C7C1;}
+  .gpx-btn{
+    appearance:none;border:none;cursor:pointer;margin:0;padding:0;flex-shrink:0;
+    width:40px;height:40px;border-radius:10px;background:var(--ink-blue);color:#fff;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .gpx-btn.loading{opacity:0.6;pointer-events:none;}
+  .gpx-empty{flex-shrink:0;width:40px;height:40px;border-radius:10px;background:#E6E6E1;color:var(--muted);font-size:8.5px;font-weight:600;display:flex;align-items:center;justify-content:center;text-align:center;}
+
+  .skeleton{height:74px;border-radius:var(--radius);background:linear-gradient(90deg,#fff 25%,#f2f2ef 37%,#fff 63%);background-size:400% 100%;animation:shimmer 1.4s ease infinite;border:1px solid var(--border);}
+  .skeleton.big{height:330px;border-radius:18px;}
+  @keyframes shimmer{0%{background-position:100% 0;}100%{background-position:0 0;}}
+  .empty-state,.error-state{margin:24px 12px;padding:22px;border-radius:var(--radius);background:var(--surface);border:1px solid var(--border);text-align:center;color:var(--muted);font-size:14px;}
+  .error-state{color:#B23A22;background:#FCEEE9;border-color:#F2CCBB;}
+
+  footer.foot{text-align:center;font-size:11.5px;color:var(--muted);padding:26px 18px 8px;line-height:1.6;}
+  footer.foot a{color:var(--muted);}
+
+  @media (prefers-reduced-motion: reduce){
+    .refresh-btn.spinning svg,.skeleton{animation:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header class="top">
+    <div class="top-inner">
+      <div class="brand">
+        <h1>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#BFE3F5" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 2v20M4.9 6l14.2 12M19.1 6L4.9 18"/><path d="M9.5 3.5L12 6l2.5-2.5M9.5 20.5L12 18l2.5 2.5"/></svg>
+          OACT Winter
+        </h1>
+        <div class="sub">Winterritten 2026–2027</div>
+      </div>
+      <button class="refresh-btn" id="refreshBtn" aria-label="Vernieuwen" title="Vernieuwen">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
+      </button>
+    </div>
+    <div class="status-row">
+      <span class="status-dot" id="statusDot"></span>
+      <span id="statusText">Laden…</span>
+    </div>
+  </header>
+
+  <div class="hero-wrap" id="heroWrap"><div class="skeleton big"></div></div>
+
+  <div class="section-title">Winterkalender</div>
+  <div class="legend">
+    <span><i class="dot flat"></i>Vlak (&lt;500 Hm)</span>
+    <span><i class="dot hill"></i>Heuvel (&gt;500 Hm)</span>
+  </div>
+  <div id="content">
+    <div class="list" style="padding-top:10px;">
+      <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+    </div>
+  </div>
+
+  <footer class="foot">
+    OA Wielerclub · gegevens uit de clubkalender<br>
+    Weerdata: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a> (CC BY 4.0)
+  </footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- Config ----------
+  var SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSA-5wGlK2InBpsQqFwXksZXQTVPXICw64AOVAcYDNJRbcJ3RrFIldHea0AhH2WrUp9UlczOgmQMo_I/pub?gid=1444867192&single=true&output=csv";
+  var GPX_API_URL = "https://api.github.com/repos/oacyclingteam/kalender/contents/gpx/2027";
+  var HEUVEL_THRESHOLD_HM = 500;
+  var CACHE_KEY = "oact-winter-cache-v1";
+  var WX_CACHE_PREFIX = "oact-winter-wx-v1-";
+  var WX_CACHE_MS = 60 * 60 * 1000;      // weerdata 1 uur bewaren
+  var FORECAST_DAYS = 7;                  // voorspelling pas tonen vanaf 7 dagen vooraf
+  var WX_HOURS = 4;                       // aantal uren in de weerstrook
+  var SWITCH_HOUR = 14;                   // na 14u op rit-zondag schuift de grote kaart door
+  var START = { lat: 50.8789, lon: 4.5515 }; // Café De Kiek (startpunt van de GPX-routes)
+  var WINDY_URL = "https://www.windy.com/?" + START.lat + "," + START.lon + ",10";
+
+  var MONTHS_NL = ["januari","februari","maart","april","mei","juni","juli","augustus","september","oktober","november","december"];
+  var MONTHS_NL_SHORT = ["jan","feb","mrt","apr","mei","jun","jul","aug","sep","okt","nov","dec"];
+  var DAYS_NL = ["zondag","maandag","dinsdag","woensdag","donderdag","vrijdag","zaterdag"];
+  // Engelse én Nederlandse maandafkortingen (gepubliceerde CSV kan beide geven)
+  var MONTHS_MAP = {jan:0,feb:1,mar:2,mrt:2,maa:2,apr:3,may:4,mei:4,jun:5,jul:6,aug:7,sep:8,oct:9,okt:9,nov:10,dec:11};
+
+  var heroEl = document.getElementById('heroWrap');
+  var contentEl = document.getElementById('content');
+  var statusText = document.getElementById('statusText');
+  var statusDot = document.getElementById('statusDot');
+  var refreshBtn = document.getElementById('refreshBtn');
+
+  // ---------- Helpers ----------
+  function normalize(s){
+    return (s||"").toString().normalize("NFD").replace(/[̀-ͯ]/g,"").toUpperCase().replace(/[^A-Z0-9]/g,"");
+  }
+  function esc(s){
+    return (s||"").toString().replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+  function pad(n){ return (n<10?'0':'')+n; }
+  function isoDate(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+
+  function parseCSV(text){
+    var rows=[],row=[],field="",inQ=false;
+    for (var i=0;i<text.length;i++){
+      var c=text[i];
+      if (inQ){
+        if (c==='"'){ if (text[i+1]==='"'){field+='"';i++;} else inQ=false; }
+        else field+=c;
+      } else {
+        if (c==='"') inQ=true;
+        else if (c===','){ row.push(field); field=""; }
+        else if (c==='\n'){ row.push(field); rows.push(row); row=[]; field=""; }
+        else if (c!=='\r') field+=c;
+      }
+    }
+    if (field.length||row.length){ row.push(field); rows.push(row); }
+    return rows.filter(function(r){ return r.some(function(v){ return v && v.trim(); }); });
+  }
+
+  function parseDate(datum){
+    // 22-Nov-2026 of 22-nov-2026 (ook 22/11/2026)
+    var s=(datum||"").trim();
+    var m=/^(\d{1,2})-([A-Za-z]{3})[a-z]*\.?-(\d{4})$/.exec(s);
+    if (m){
+      var mon=MONTHS_MAP[m[2].toLowerCase()];
+      if (mon===undefined) return null;
+      return new Date(parseInt(m[3],10), mon, parseInt(m[1],10));
+    }
+    m=/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(s);
+    if (m) return new Date(parseInt(m[3],10), parseInt(m[2],10)-1, parseInt(m[1],10));
+    return null;
+  }
+
+  function parseTime(t){
+    var m=/(\d{1,2})\s*[h:u.]\s*(\d{2})?/i.exec(t||"");
+    if (!m) return null;
+    return {h:parseInt(m[1],10), m:m[2]?parseInt(m[2],10):0};
+  }
+  function formatTime(t){ var p=parseTime(t); return p ? (pad(p.h)+':'+pad(p.m)) : ''; }
+
+  function extractKmHm(filename){
+    var km=/(\d+)\s*km/i.exec(filename), hm=/(\d+)\s*hm/i.exec(filename);
+    return { km: km?parseInt(km[1],10):null, hm: hm?parseInt(hm[1],10):null };
+  }
+  function findGpxMatch(ritName, gpxFiles){
+    var target=normalize(ritName);
+    if (!target) return null;
+    for (var i=0;i<gpxFiles.length;i++){
+      if (normalize(gpxFiles[i].name).indexOf(target)!==-1) return gpxFiles[i];
+    }
+    return null;
+  }
+  function timeAgo(ts){
+    var diff=Math.round((Date.now()-ts)/1000);
+    if (diff<45) return "net bijgewerkt";
+    if (diff<3600) return Math.round(diff/60)+" min geleden bijgewerkt";
+    if (diff<86400) return Math.round(diff/3600)+" u geleden bijgewerkt";
+    return Math.round(diff/86400)+" d geleden bijgewerkt";
+  }
+
+  // ---------- Icons ----------
+  function downloadSVG(size){
+    size=size||17;
+    return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>';
+  }
+  function dropSVG(){
+    return '<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5c-3.5 5-6 8.4-6 11.5a6 6 0 0 0 12 0c0-3.1-2.5-6.5-6-11.5z"/></svg>';
+  }
+  // pijl wijst waar de wind naartoe waait (van-richting + 180°)
+  function windArrowSVG(fromDeg, color){
+    var rot=(fromDeg+180)%360;
+    return '<svg width="12" height="12" viewBox="0 0 24 24" style="transform:rotate('+rot+'deg)" fill="none" stroke="'+(color||'currentColor')+'" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V4"/><path d="M6 10l6-6 6 6"/></svg>';
+  }
+  function weatherIcon(code){
+    var c="#fff", sun="#F6C453", ice="#BFE3F5";
+    var cloud='<path d="M7 18h10a4 4 0 0 0 .5-7.97A5.5 5.5 0 0 0 7 9.5 4.25 4.25 0 0 0 7 18z" fill="none" stroke="'+c+'" stroke-width="1.8" stroke-linejoin="round"/>';
+    var up='<path d="M7 15h10a4 4 0 0 0 .5-7.97A5.5 5.5 0 0 0 7 6.5 4.25 4.25 0 0 0 7 15z" fill="none" stroke="'+c+'" stroke-width="1.8" stroke-linejoin="round"/>';
+    var svg=function(inner){ return '<svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true">'+inner+'</svg>'; };
+    if (code===0) return svg('<circle cx="12" cy="12" r="4.5" fill="none" stroke="'+sun+'" stroke-width="1.9"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="'+sun+'" stroke-width="1.9" stroke-linecap="round"/>');
+    if (code===1||code===2) return svg('<circle cx="8.5" cy="8" r="3.2" fill="none" stroke="'+sun+'" stroke-width="1.8"/><path d="M9 19h8.5a3.5 3.5 0 0 0 .4-6.97A4.8 4.8 0 0 0 9 11.3 3.85 3.85 0 0 0 9 19z" fill="var(--ink-blue)" stroke="'+c+'" stroke-width="1.8" stroke-linejoin="round"/>');
+    if (code===3) return svg(cloud);
+    if (code===45||code===48) return svg('<path d="M4 9h16M3 13h18M5 17h14" stroke="'+c+'" stroke-width="1.8" stroke-linecap="round"/>');
+    if ((code>=71&&code<=77)||code===85||code===86) return svg(up+'<path d="M8 19.5h.01M12 21h.01M16 19.5h.01" stroke="'+ice+'" stroke-width="2.6" stroke-linecap="round"/>');
+    if (code===56||code===57||code===66||code===67) return svg(up+'<path d="M9 18l-1 3M13 18l-1 3M17 18l-1 3" stroke="'+ice+'" stroke-width="1.8" stroke-linecap="round"/>');
+    if (code>=95) return svg(up+'<path d="M12.5 16l-2 3.5h3l-2 3.5" fill="none" stroke="'+sun+'" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>');
+    if (code>=51) return svg(up+'<path d="M9 18l-1 3M13 18l-1 3M17 18l-1 3" stroke="#8EC5EA" stroke-width="1.8" stroke-linecap="round"/>');
+    return svg(cloud);
+  }
+  function weatherLabel(code){
+    if (code===0) return "zonnig";
+    if (code===1) return "overwegend zonnig";
+    if (code===2) return "half bewolkt";
+    if (code===3) return "bewolkt";
+    if (code===45||code===48) return "mist";
+    if (code===56||code===57) return "ijzel (motregen)";
+    if (code===66||code===67) return "ijzel";
+    if (code>=51&&code<=55) return "motregen";
+    if (code>=61&&code<=65) return "regen";
+    if (code>=71&&code<=77) return "sneeuw";
+    if (code>=80&&code<=82) return "buien";
+    if (code===85||code===86) return "sneeuwbuien";
+    if (code>=95) return "onweer";
+    return "";
+  }
+  function compassNL(deg){
+    var dirs=["N","NO","O","ZO","Z","ZW","W","NW"];
+    return dirs[Math.round(((deg%360)+360)%360/45)%8];
+  }
+
+  // ---------- GPX download (fetch → blob, zoals de zomerkalender) ----------
+  function downloadGpx(url, filename, btn){
+    btn.classList.add('loading');
+    fetch(url).then(function(r){ if(!r.ok) throw new Error(); return r.blob(); })
+      .then(function(blob){
+        var u=URL.createObjectURL(blob), a=document.createElement('a');
+        a.href=u; a.download=filename; document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        setTimeout(function(){ URL.revokeObjectURL(u); },4000);
+      })
+      .catch(function(){ window.open(url,'_blank','noopener'); })
+      .finally(function(){ btn.classList.remove('loading'); });
+  }
+  document.addEventListener('click', function(e){
+    var btn=e.target.closest ? e.target.closest('[data-gpx-url]') : null;
+    if (!btn) return;
+    e.preventDefault();
+    downloadGpx(btn.getAttribute('data-gpx-url'), btn.getAttribute('data-gpx-name'), btn);
+  });
+
+  // ---------- Ride timing ----------
+  function rideEnd(ride){
+    var d=new Date(ride.date.getTime());
+    d.setHours(SWITCH_HOUR,0,0,0);
+    return d;
+  }
+  function findNextRide(rides){
+    var now=new Date();
+    for (var i=0;i<rides.length;i++){
+      if (rides[i].date && rideEnd(rides[i]) > now) return rides[i];
+    }
+    return null;
+  }
+  function daysUntil(d){
+    var t=new Date(); t.setHours(0,0,0,0);
+    var x=new Date(d.getTime()); x.setHours(0,0,0,0);
+    return Math.round((x-t)/86400000);
+  }
+
+  // ---------- Hero ----------
+  function renderHero(ride){
+    if (!ride){
+      heroEl.innerHTML='<div class="empty-state">Het winterseizoen zit erop. Tot op de openingsrit!</div>';
+      return;
+    }
+    var d=ride.date, kh=ride.gpx?extractKmHm(ride.gpx.name):{km:null,hm:null};
+    var hasStats=kh.km!==null&&kh.hm!==null, isHill=hasStats&&kh.hm>HEUVEL_THRESHOLD_HM;
+    var dn=daysUntil(d);
+    var when = dn===0 ? 'Vandaag' : dn===1 ? 'Morgen' : DAYS_NL[d.getDay()];
+    var dateLine = when+' '+d.getDate()+' '+MONTHS_NL[d.getMonth()]+(ride.vertrek?' · vertrek '+formatTime(ride.vertrek):'');
+
+    var tag = hasStats ? '<span class="tag '+(isHill?'hill':'flat')+'">'+(isHill?'Heuvel':'Vlak')+'</span>' : '<span class="tag tbd">GPX volgt</span>';
+    var stats = hasStats
+      ? '<div class="hero-stats"><span class="figs">'+kh.km+'<span class="unit"> km</span><span class="sep">·</span>'+kh.hm+'<span class="unit"> hm</span></span></div>'
+      : '<div class="hero-stats" style="font-size:13px;color:var(--muted)">Afstand en hoogtemeters volgen</div>';
+
+    var gpxBtn = ride.gpx
+      ? '<button type="button" class="hero-gpx" data-gpx-url="'+esc(ride.gpx.download_url)+'" data-gpx-name="'+esc(ride.gpx.name)+'">'+downloadSVG(18)+' Download GPX</button>'
+      : '<div class="hero-gpx none">GPX volgt binnenkort</div>';
+
+    heroEl.innerHTML =
+      '<section class="hero" aria-label="Volgende rit">'+
+        '<div class="hero-top">'+
+          '<div class="eyebrow">Volgende rit</div>'+
+          '<div class="hero-date">'+esc(dateLine)+'</div>'+
+          '<div class="hero-title"><h2 class="hero-name">'+esc(ride.rit)+'</h2>'+tag+'</div>'+
+          stats+
+        '</div>'+
+        '<div class="wx" id="wxBox"><div class="wx-wait">Weersvoorspelling laden…</div></div>'+
+        '<div class="route-wind">'+
+          '<div class="route-map" id="routeMap"><span class="leg-note">route…</span></div>'+
+          '<div class="legs" id="legs">'+legsHTML(null)+'</div>'+
+        '</div>'+
+        '<div class="hero-actions">'+gpxBtn+
+          '<div class="hero-links"><a href="'+WINDY_URL+'" target="_blank" rel="noopener">Windkaart op Windy ↗</a><span>bron: Open-Meteo</span></div>'+
+        '</div>'+
+      '</section>';
+
+    loadRoute(ride).then(function(route){
+      ride._route=route;
+      drawRoute(route, ride._wind);
+      updateLegs(ride);
+    });
+    loadWeather(ride).then(function(wx){
+      renderWeather(ride, wx);
+    });
+  }
+
+  function legsHTML(info){
+    if (!info){
+      return '<div class="leg"><span class="lbl">Heen</span><span class="val" style="color:var(--muted)">–</span></div>'+
+             '<div class="leg"><span class="lbl">Terug</span><span class="val" style="color:var(--muted)">–</span></div>'+
+             '<div class="leg-note">Wind t.o.v. de route volgt met de voorspelling</div>';
+    }
+    return '<div class="leg"><span class="lbl">Heen</span><span class="val '+info.out.cls+'">'+info.out.txt+'</span></div>'+
+           '<div class="leg"><span class="lbl">Terug</span><span class="val '+info.back.cls+'">'+info.back.txt+'</span></div>'+
+           '<div class="leg-note">Wind '+compassNL(info.dir)+' · '+Math.round(info.speed)+' km/u</div>';
+  }
+
+  // ---------- Weather (Open-Meteo) ----------
+  function loadWeather(ride){
+    var dn=daysUntil(ride.date);
+    if (dn>FORECAST_DAYS) return Promise.resolve({wait:true, dn:dn});
+    var key=WX_CACHE_PREFIX+isoDate(ride.date);
+    try{
+      var c=JSON.parse(localStorage.getItem(key)||"null");
+      if (c && Date.now()-c.ts < WX_CACHE_MS) return Promise.resolve(c.data);
+    }catch(e){}
+    var ds=isoDate(ride.date);
+    var url="https://api.open-meteo.com/v1/forecast?latitude="+START.lat+"&longitude="+START.lon+
+      "&hourly=temperature_2m,apparent_temperature,precipitation_probability,precipitation,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m"+
+      "&timezone=Europe%2FBrussels&wind_speed_unit=kmh&start_date="+ds+"&end_date="+ds;
+    return fetch(url).then(function(r){ if(!r.ok) throw new Error(); return r.json(); })
+      .then(function(j){
+        try{ localStorage.setItem(key, JSON.stringify({ts:Date.now(), data:j})); }catch(e){}
+        return j;
+      })
+      .catch(function(){ return {error:true}; });
+  }
+
+  function pickHours(ride, wx){
+    var t=parseTime(ride.vertrek)||{h:9,m:0};
+    var startH=t.h, out=[];
+    var times=wx.hourly.time;
+    for (var k=0;k<WX_HOURS;k++){
+      var hh=startH+k, target=isoDate(ride.date)+'T'+pad(hh)+':00', idx=times.indexOf(target);
+      if (idx===-1) continue;
+      out.push({
+        h:hh,
+        t:wx.hourly.temperature_2m[idx],
+        feels:wx.hourly.apparent_temperature[idx],
+        pp:wx.hourly.precipitation_probability[idx],
+        code:wx.hourly.weather_code[idx],
+        ws:wx.hourly.wind_speed_10m[idx],
+        wd:wx.hourly.wind_direction_10m[idx],
+        wg:wx.hourly.wind_gusts_10m[idx]
+      });
+    }
+    return out;
+  }
+
+  function renderWeather(ride, wx){
+    var box=document.getElementById('wxBox');
+    if (!box) return;
+    if (wx.wait){
+      var from=new Date(ride.date.getTime()-FORECAST_DAYS*86400000);
+      box.innerHTML='<div class="wx-wait"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#BFE3F5" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>'+
+        '<span>Weersvoorspelling verschijnt vanaf '+DAYS_NL[from.getDay()]+' '+from.getDate()+' '+MONTHS_NL[from.getMonth()]+'.</span></div>';
+      return;
+    }
+    if (wx.error || !wx.hourly){
+      box.innerHTML='<div class="wx-wait">Weersvoorspelling niet beschikbaar. Bekijk <a href="'+WINDY_URL+'" target="_blank" rel="noopener" style="color:#fff">Windy</a>.</div>';
+      return;
+    }
+    var hrs=pickHours(ride, wx);
+    if (!hrs.length){ box.innerHTML='<div class="wx-wait">Geen uurgegevens voor dit vertrekuur.</div>'; return; }
+
+    var cells=hrs.map(function(x){
+      return '<div class="hour">'+
+        '<span class="h">'+pad(x.h)+'u</span>'+
+        weatherIcon(x.code)+
+        '<span class="t'+(x.t<=2?' cold':'')+'">'+Math.round(x.t)+'°</span>'+
+        '<span class="p">'+dropSVG()+Math.round(x.pp||0)+'%</span>'+
+        '<span class="w">'+windArrowSVG(x.wd,'#fff')+Math.round(x.ws)+'</span>'+
+      '</div>';
+    }).join('');
+
+    // samenvatting
+    var minFeels=Math.min.apply(null,hrs.map(function(x){return x.feels;}));
+    var maxGust=Math.max.apply(null,hrs.map(function(x){return x.wg;}));
+    var maxPP=Math.max.apply(null,hrs.map(function(x){return x.pp||0;}));
+    var minT=Math.min.apply(null,hrs.map(function(x){return x.t;}));
+    var wind=meanWind(hrs);
+    ride._wind=wind;
+
+    var labels=[]; hrs.forEach(function(x){ var l=weatherLabel(x.code); if(l && labels.indexOf(l)===-1) labels.push(l); });
+    var sum='Voelt als '+Math.round(minFeels)+'° · wind '+compassNL(wind.dir)+' '+Math.round(wind.speed)+' km/u (stoten '+Math.round(maxGust)+') · kans op neerslag tot '+Math.round(maxPP)+'%';
+
+    var alerts=[];
+    var freezingCode=hrs.some(function(x){ return [56,57,66,67].indexOf(x.code)!==-1; });
+    var snow=hrs.some(function(x){ return (x.code>=71&&x.code<=77)||x.code===85||x.code===86; });
+    if (freezingCode) alerts.push('Opgelet: ijzel voorspeld');
+    else if (snow) alerts.push('Opgelet: sneeuw voorspeld');
+    else if (minT<=1) alerts.push('Opgelet: kans op gladheid (rond het vriespunt)');
+    if (maxGust>=50) alerts.push('Stevige windstoten tot '+Math.round(maxGust)+' km/u');
+
+    box.innerHTML=
+      '<div class="wx-head"><b>Weer bij vertrek · Café De Kiek</b><span>'+(labels[0]||'')+'</span></div>'+
+      '<div class="hours">'+cells+'</div>'+
+      '<div class="wx-sum">'+esc(sum)+'</div>'+
+      alerts.map(function(a){ return '<div class="wx-alert"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9L2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>'+esc(a)+'</div>'; }).join('');
+
+    updateLegs(ride);
+    if (ride._route) drawRoute(ride._route, wind);
+  }
+
+  function meanWind(hrs){
+    // vectorgemiddelde van de windrichting, gewogen met windsnelheid
+    var x=0,y=0,s=0;
+    hrs.forEach(function(h){
+      var r=h.wd*Math.PI/180;
+      x+=Math.sin(r)*h.ws; y+=Math.cos(r)*h.ws; s+=h.ws;
+    });
+    var dir=(Math.atan2(x,y)*180/Math.PI+360)%360;
+    return {dir:dir, speed:s/hrs.length};
+  }
+
+  // ---------- Route (GPX) + wind t.o.v. route ----------
+  function loadRoute(ride){
+    if (!ride.gpx) return Promise.resolve(null);
+    return fetch(ride.gpx.download_url).then(function(r){ if(!r.ok) throw new Error(); return r.text(); })
+      .then(function(txt){
+        var pts=[], re=/<trkpt\b([^>]*)>/gi, m;
+        while ((m=re.exec(txt))){
+          var la=/lat="([-\d.]+)"/.exec(m[1]), lo=/lon="([-\d.]+)"/.exec(m[1]);
+          if (la&&lo) pts.push([parseFloat(la[1]), parseFloat(lo[1])]);
+        }
+        if (pts.length<2) return null;
+        // verste punt vanaf de start = keerpunt; heen = start → keerpunt
+        var s=pts[0], far=0, farD=-1;
+        pts.forEach(function(p,i){ var d=dist(s,p); if(d>farD){farD=d;far=i;} });
+        return { pts:pts, turn:far, bearing:bearing(s, pts[far]) };
+      })
+      .catch(function(){ return null; });
+  }
+  function dist(a,b){
+    var k=Math.cos(a[0]*Math.PI/180);
+    var dx=(b[1]-a[1])*k, dy=b[0]-a[0];
+    return Math.sqrt(dx*dx+dy*dy);
+  }
+  function bearing(a,b){
+    var f1=a[0]*Math.PI/180, f2=b[0]*Math.PI/180, dl=(b[1]-a[1])*Math.PI/180;
+    var y=Math.sin(dl)*Math.cos(f2), x=Math.cos(f1)*Math.sin(f2)-Math.sin(f1)*Math.cos(f2)*Math.cos(dl);
+    return (Math.atan2(y,x)*180/Math.PI+360)%360;
+  }
+  function relWind(travelDeg, windFromDeg, speed){
+    if (speed<8) return {txt:'Weinig wind', cls:''};
+    var diff=((windFromDeg-travelDeg+540)%360)-180; // 0 = wind recht van voren
+    var a=Math.abs(diff);
+    if (a<=60) return {txt:'Tegenwind', cls:'head'};
+    if (a>=120) return {txt:'Rugwind', cls:'tail'};
+    return {txt:'Zijwind '+(diff>0?'rechts':'links'), cls:''};
+  }
+  function updateLegs(ride){
+    var el=document.getElementById('legs');
+    if (!el) return;
+    if (!ride._route || !ride._wind){ el.innerHTML=legsHTML(null); return; }
+    var b=ride._route.bearing, w=ride._wind;
+    el.innerHTML=legsHTML({
+      out: relWind(b, w.dir, w.speed),
+      back: relWind((b+180)%360, w.dir, w.speed),
+      dir: w.dir, speed: w.speed
+    });
+  }
+  function drawRoute(route, wind){
+    var el=document.getElementById('routeMap');
+    if (!el) return;
+    if (!route){ el.innerHTML='<span class="leg-note">geen route</span>'; return; }
+    var pts=route.pts, step=Math.max(1, Math.floor(pts.length/180));
+    var k=Math.cos(pts[0][0]*Math.PI/180);
+    var xs=[],ys=[];
+    for (var i=0;i<pts.length;i+=step){ xs.push(pts[i][1]*k); ys.push(-pts[i][0]); }
+    var minX=Math.min.apply(null,xs), maxX=Math.max.apply(null,xs), minY=Math.min.apply(null,ys), maxY=Math.max.apply(null,ys);
+    var span=Math.max(maxX-minX, maxY-minY)||1, S=84, off=10;
+    var ox=off+(S-(maxX-minX)/span*S)/2, oy=off+(S-(maxY-minY)/span*S)/2;
+    var poly=xs.map(function(x,i){ return ((x-minX)/span*S+ox).toFixed(1)+','+((ys[i]-minY)/span*S+oy).toFixed(1); });
+    var sx=poly[0].split(',');
+    var arrow='';
+    if (wind && wind.speed>=1){
+      var rot=(wind.dir+180)%360;
+      arrow='<g transform="translate(90 14) rotate('+rot+')"><path d="M0 8V-8M-5 -3L0 -8L5 -3" fill="none" stroke="#E5622A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></g>';
+    }
+    el.innerHTML='<svg width="104" height="104" viewBox="0 0 104 104" role="img" aria-label="Routeschets met windrichting">'+
+      '<polyline points="'+poly.join(' ')+'" fill="none" stroke="#16324A" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>'+
+      '<circle cx="'+sx[0]+'" cy="'+sx[1]+'" r="4" fill="#E5622A" stroke="#fff" stroke-width="1.5"/>'+
+      '<text x="6" y="98" font-size="9" font-family="Inter,sans-serif" fill="#71818F">N ↑</text>'+
+      arrow+'</svg>';
+  }
+
+  // ---------- List ----------
+  function renderList(rides, next){
+    if (!rides.length){
+      contentEl.innerHTML='<div class="empty-state">Nog geen winterritten in de kalender.</div>';
+      return;
+    }
+    var now=new Date(), html='', cur=null;
+    rides.forEach(function(r){
+      var key=r.date?(r.date.getFullYear()+'-'+r.date.getMonth()):'x';
+      if (key!==cur){
+        if (cur!==null) html+='</div>';
+        html+='<div class="month-heading">'+(r.date?MONTHS_NL[r.date.getMonth()]+' '+r.date.getFullYear():'Datum onbekend')+'</div><div class="list">';
+        cur=key;
+      }
+      var kh=r.gpx?extractKmHm(r.gpx.name):{km:null,hm:null};
+      var has=kh.km!==null&&kh.hm!==null, hill=has&&kh.hm>HEUVEL_THRESHOLD_HM;
+      var cls='card'+(r===next?' next':'')+(r.date&&rideEnd(r)<now?' past':'');
+      var tag=has?'<span class="tag '+(hill?'hill':'flat')+'">'+(hill?'Heuvel':'Vlak')+'</span>':'<span class="tag tbd">GPX volgt</span>';
+      var meta=(r.vertrek?'<span>'+formatTime(r.vertrek)+'</span>':'')+
+        (has?'<span class="figs">'+kh.km+' km · '+kh.hm+' hm</span>':'');
+      var btn=r.gpx
+        ? '<button type="button" class="gpx-btn" aria-label="Download GPX '+esc(r.rit)+'" data-gpx-url="'+esc(r.gpx.download_url)+'" data-gpx-name="'+esc(r.gpx.name)+'">'+downloadSVG()+'</button>'
+        : '<div class="gpx-empty">binnen-<br>kort</div>';
+      html+='<div class="'+cls+'">'+
+        '<div class="date-block"><div class="day">'+(r.date?r.date.getDate():'?')+'</div><div class="mon">'+(r.date?MONTHS_NL_SHORT[r.date.getMonth()]:'')+'</div></div>'+
+        '<div class="card-body"><div class="row-top"><span class="ride-name">'+esc((r.rit||'').toLowerCase())+'</span>'+tag+'</div>'+
+        '<div class="meta">'+meta+'</div></div>'+btn+'</div>';
+    });
+    html+='</div>';
+    contentEl.innerHTML=html;
+  }
+
+  function render(rides, gpxFiles){
+    var list=rides.map(function(r){ return { date:r.date, vertrek:r.vertrek, rit:r.rit, gpx:findGpxMatch(r.rit, gpxFiles) }; });
+    list.sort(function(a,b){ if(!a.date) return 1; if(!b.date) return -1; return a.date-b.date; });
+    var next=findNextRide(list);
+    renderHero(next);
+    renderList(list, next);
+  }
+
+  function parseRides(csv){
+    var rows=parseCSV(csv);
+    if (!rows.length) return [];
+    rows.shift();
+    return rows.map(function(r){
+      return { date:parseDate(r[0]), vertrek:(r[1]||'').trim(), rit:(r[2]||'').trim() };
+    }).filter(function(r){ return r.rit; });
+  }
+
+  // ---------- Fetch cycle ----------
+  function setStatus(state, ts){
+    statusDot.className='status-dot'+(state==='error'?' error':'');
+    if (state==='loading') statusText.textContent='Laden…';
+    else if (state==='error') statusText.textContent='Vernieuwen mislukt · toont laatste gegevens';
+    else statusText.textContent=timeAgo(ts);
+  }
+  function loadFromCache(){
+    try{
+      var d=JSON.parse(localStorage.getItem(CACHE_KEY)||"null");
+      if (!d) return null;
+      d.rides.forEach(function(r){ r.date=r.date?new Date(r.date):null; });
+      return d;
+    }catch(e){ return null; }
+  }
+  function saveToCache(rides, gpxFiles, ts){
+    try{ localStorage.setItem(CACHE_KEY, JSON.stringify({rides:rides,gpxFiles:gpxFiles,ts:ts})); }catch(e){}
+  }
+
+  function fetchLive(){
+    refreshBtn.classList.add('spinning');
+    setStatus('loading');
+    var csvP=fetch(SHEET_CSV_URL,{cache:"no-store"}).then(function(r){ if(!r.ok) throw new Error(); return r.text(); });
+    var gpxP=fetch(GPX_API_URL).then(function(r){ if(!r.ok) throw new Error(); return r.json(); })
+      .then(function(l){ return l.filter(function(f){ return /\.gpx$/i.test(f.name); }).map(function(f){ return {name:f.name, download_url:f.download_url}; }); })
+      .catch(function(){ var c=loadFromCache(); return c?c.gpxFiles:[]; });
+    Promise.all([csvP,gpxP]).then(function(res){
+      var rides=parseRides(res[0]), ts=Date.now();
+      render(rides,res[1]); setStatus('ok',ts); saveToCache(rides,res[1],ts);
+    }).catch(function(){
+      var c=loadFromCache();
+      if (c){ render(c.rides,c.gpxFiles); setStatus('error'); }
+      else {
+        heroEl.innerHTML='';
+        contentEl.innerHTML='<div class="error-state">Kon de kalender niet laden. Controleer je internetverbinding en probeer opnieuw.</div>';
+        setStatus('error');
+      }
+    }).finally(function(){ refreshBtn.classList.remove('spinning'); });
+  }
+
+  refreshBtn.addEventListener('click', fetchLive);
+
+  var cached=loadFromCache();
+  if (cached){ render(cached.rides,cached.gpxFiles); setStatus('ok',cached.ts); }
+  fetchLive();
+})();
+</script>
+</body>
+</html>
