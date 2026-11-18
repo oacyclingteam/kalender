@@ -704,7 +704,7 @@
   function parseRides(csv){
     var rows=parseCSV(csv);
     if (!rows.length) return [];
-    rows.shift();
+    if (!parseDate(rows[0][0])) rows.shift(); // kopregel alleen overslaan als die er is
     return rows.map(function(r){
       return { date:parseDate(r[0]), vertrek:(r[1]||'').trim(), rit:(r[2]||'').trim() };
     }).filter(function(r){ return r.rit; });
