@@ -70,21 +70,76 @@ niet aan te vullen.
 ## Bestandsstructuur
 
 ```
-oact/
-├── index.html          ← de volledige website (1 bestand, geen build nodig)
+kalender/
+├── index.html          ← zomerkalender (1 bestand, geen build nodig)
+├── winter/
+│   └── index.html      ← winterkalender (apart bestand, eigen URL)
 ├── gpx/
 │   ├── 2025/            ← archief
 │   ├── 2026/            ← archief
-│   ├── 2027/             ← actief seizoen
+│   ├── 2027/            ← actief seizoen (zomer ÉN winter gebruiken deze map)
 │   │   ├── OA27-Tisselt-85km450hm.gpx
 │   │   └── ...
 │   └── _Nieuw/          ← nog te verwerken routes
 └── README.md
 ```
 
-Voor een volgend seizoen kan je een map `gpx/2028/` toevoegen; pas dan in
+Voor een volgend zomerseizoen kan je een map `gpx/2028/` toevoegen; pas dan in
 `index.html` de regels `GPX_API_URL` en `GPX_RAW_BASE` bovenaan het script
 aan van `gpx/2027` naar `gpx/2028`.
+
+## Winterkalender
+
+Voor de winterperiode (**zondag 22 november 2026 t.e.m. 28 februari 2027**)
+is er een aparte, eenvoudigere kalender. Die staat los van de zomerkalender
+en heeft een eigen link:
+
+`https://oacyclingteam.github.io/kalender/winter/`
+
+De zomer- en winterkalender zijn twee afzonderlijke pagina's en verwijzen
+bewust **niet** naar elkaar.
+
+**Gegevens**
+
+- De ritten staan in een eigen tabblad van dezelfde Google Sheet: `2026-winter`
+  (kolommen `Datum | Vertrek | Rit`). Er is hier **geen Groep A/B**: per
+  zondag is er één rit.
+- Dit tabblad is apart gepubliceerd als CSV; de link staat in
+  `winter/index.html` bij `SHEET_CSV_URL`.
+- De winterritten gebruiken de routes uit `gpx/2027/`. Koppeling en
+  naamgeving zijn identiek aan de zomerkalender (naam in de Sheet moet in de
+  bestandsnaam voorkomen; km/Hm komen uit de bestandsnaam).
+
+**Wat toont de pagina?**
+
+- Bovenaan één grote kaart met de **eerstvolgende rit**: datum, vertrekuur,
+  routenaam, afstand, hoogtemeters, de tag Vlak/Heuvel en de GPX-download.
+  Daaronder staan de andere ritten in een lijst.
+- Op rit-zondag schuift de grote kaart na 14u door naar de volgende rit.
+- **Weersvoorspelling** (Open-Meteo): een uurstrook rond het vertrekuur.
+  Die verschijnt pas vanaf 7 dagen voor de rit, omdat de voorspelling
+  daarvoor te onbetrouwbaar is.
+- **Wind t.o.v. de route**: een kaartje van de route met per heen- en
+  terugweg de aanduiding Tegenwind, Rugwind of Zijwind. Dit wordt berekend
+  uit de GPX (startpunt = Café De Kiek) en de voorspelde windrichting.
+- Links naar de windkaart op **Windy** en naar de **KMI**-voorspelling voor
+  Kortenberg.
+- Een donker thema ("Sneeuwnacht") met amberkleurig accent, goed leesbaar
+  op donkere winterochtenden.
+
+**Een winterrit toevoegen of wijzigen**
+
+1. Pas een rij aan in het tabblad `2026-winter` van de Google Sheet.
+2. Zet (indien nodig) het GPX-bestand in `gpx/2027/`.
+3. Klaar — geen herpublicatie nodig. De pagina onthoudt de laatste gegevens
+   en haalt bij elk bezoek de nieuwste versie op; de weerdata wordt 1 uur
+   bewaard.
+
+**Volgende winter (2027-2028)**
+
+Maak een nieuw tabblad (bv. `2027-winter`), publiceer dat als CSV en vervang
+de link bij `SHEET_CSV_URL` in `winter/index.html`. Verwijs bij
+`GPX_API_URL` naar de juiste `gpx/`-map en pas de periode in deze README aan.
 
 ## Hosting: GitHub Pages
 
